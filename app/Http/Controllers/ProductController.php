@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Product;
 use App\Repositories\All\Products\ProductInterface;
-use App\Repositories\All\Products\ProductRepositoryInterface;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -20,7 +19,6 @@ class ProductController extends Controller
         $productRepository = app()->make(ProductInterface::class);
 
         $products = ($productRepository->all('category'));
-        // $products = Product::with('category')->latest()->get();
         return Inertia::render('Product/Product', ['products' => $products]);
     }
     /**
@@ -29,8 +27,8 @@ class ProductController extends Controller
     public function create()
     {
         // dd(request());
-        // $productRepository = app()->make(ProductInterface::class);
-        // $productRepository->all();
+        $productRepository = app()->make(ProductInterface::class);
+        $productRepository->all();
 
         $categories = Category::all();
         return Inertia::render('Product/CreateProduct', ['categories' => $categories]);
@@ -41,14 +39,13 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request);
         $validated = $request->validate([
             'brand_name' => 'required',
             'price' => 'required|numeric',
             'quantity' => 'required|numeric',
             'category_id' => 'required|exists:categories,id',
         ]);
-        // Product::create($validated);
+
         $productRepository = app()->make(ProductInterface::class);
         $productRepository->create($validated);
         return redirect(route('products.index'))->with('message', 'Product created successfully.');
@@ -64,8 +61,7 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        // $category_id = $product->category_id;
-        // $categoryName = Category::where('id', $category_id)->first()->name;
+
         $categories = Category::all();
         return Inertia::render('Product/EditProduct', ['product' => $product, 'categories' => $categories]);
     }
@@ -75,13 +71,15 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
+
+        $productRepository = app()->make(ProductInterface::class);
         $validated = $request->validate([
             'brand_name' => 'required',
             'price' => 'required|numeric',
             'quantity' => 'required|numeric',
             'category_id' => 'required|exists:categories,id',
         ]);
-        $product->update($validated);
+        $productRepository->update($product->id, $validated);
         return redirect(route('products.index'));
     }
 
@@ -90,7 +88,8 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        $product->delete();
+        $productRepository = app()->make(ProductInterface::class);
+        $productRepository->delete($product->id);
         return redirect(route('products.index'));
     }
 }

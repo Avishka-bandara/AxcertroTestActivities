@@ -1,9 +1,31 @@
+import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
+import React from 'react';
 
-export default function AddCategory() {
+type Category = {
+    id: number;
+    name: string;
+};
+
+interface CategoryProps {
+    categories: Category[];
+}
+
+export default function AddCategory({ categories }: CategoryProps) {
+    const { data, setData, post, errors } = useForm({
+        name: '',
+    });
+    function submit(e: React.SyntheticEvent) {
+        e.preventDefault();
+        post(route('categories.store'));
+    }
+
+    function reset() {
+        setData('name', '');
+    }
     return (
         <AuthenticatedLayout
             header={
@@ -19,38 +41,35 @@ export default function AddCategory() {
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                        <div className="p-6 text-gray-900">
-                            <form action="">
-                                <div className="mb-grid my-3 grid-cols-2 gap-4 md:grid">
+                        <div className="justify-center p-6 text-gray-900">
+                            <form className="px-10" onSubmit={submit}>
+                                <div className="mb-grid my-3 md:grid">
                                     <div>
-                                        <InputLabel htmlFor="email" value="Email" />
+                                        <InputLabel htmlFor="name" value="Category Name" />
 
                                         <TextInput
-                                            id="category"
+                                            id="name"
                                             type="text"
-                                            name="category"
-                                            // value={data.category}
+                                            name="name"
+                                            value={data.name}
                                             className="mt-1 block w-full"
                                             autoComplete="username"
                                             isFocused={true}
-                                            // onChange={(e) => setData('category', e.target.value)}
+                                            onChange={(e) => setData('name', e.target.value)}
                                         />
 
-                                        {/* <InputError message={errors.category} className="mt-2" /> */}
+                                        <InputError message={errors.name} className="mt-2" />
                                     </div>
                                 </div>
-                                <div className="mb-grid grid-cols-2 gap-4 md:grid">
+                                <div className="mb-grid gap-4 md:grid">
                                     <div className="mb-grid grid-cols-2 gap-4 md:grid">
                                         <button
-                                            type="submit"
+                                            onClick={reset}
                                             className="rounded-md border border-gray-300 bg-yellow-400 p-2 transition-all duration-150 hover:bg-yellow-500 hover:shadow-lg"
                                         >
                                             Reset
                                         </button>
-                                        <button
-                                            type="reset"
-                                            className="rounded-md border border-gray-300 bg-green-400 p-2 transition-all duration-150 hover:bg-green-500 hover:shadow-lg"
-                                        >
+                                        <button className="rounded-md border border-gray-300 bg-green-400 p-2 transition-all duration-150 hover:bg-green-500 hover:shadow-lg">
                                             Save
                                         </button>
                                     </div>
@@ -58,6 +77,23 @@ export default function AddCategory() {
                             </form>
                         </div>
                     </div>
+
+                    <table className="mt-6 w-full border-collapse bg-white text-center text-sm text-gray-500">
+                        <thead>
+                            <tr>
+                                <th className="px-4 py-2">ID</th>
+                                <th className="px-4 py-2">Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {categories.map((category) => (
+                                <tr key={category.id} className="border-t border-gray-200">
+                                    <td className="px-4 py-2">{category.id}</td>
+                                    <td className="px-4 py-2">{category.name}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </AuthenticatedLayout>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Repositories\All\Categories\CategoryInterface;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -13,7 +14,9 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        return Inertia::render('Category/AddCategory');
+        $categoryRepository = app()->make(CategoryInterface::class);
+        $categories = $categoryRepository->all();
+        return Inertia::render('Category/AddCategory', ['categories' => $categories]);
     }
 
     /**
@@ -29,16 +32,21 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // dd($request->all());
+        $categoryRepository = app()->make(CategoryInterface::class);
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+        // Category::create($request->all());
+
+        $categoryRepository->create($request->all());
+        return redirect()->back()->with('message', 'Category created successfully.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Category $category)
-    {
-        //
-    }
+    public function show(Category $category) {}
 
     /**
      * Show the form for editing the specified resource.
