@@ -28,9 +28,6 @@ export default function EditProduct({ product, categories }: EditProductProps) {
         category_id: categories.find((category) => category.id === product.category_id)?.id || '',
     });
 
-    console.log(product);
-    console.log(categories);
-
     const { delete: destroy } = useForm();
 
     function submit(e: React.SyntheticEvent) {
