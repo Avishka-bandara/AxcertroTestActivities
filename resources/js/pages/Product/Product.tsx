@@ -23,7 +23,7 @@ export default function Product({ products }: ProductProps) {
             header={
                 <div className="flex items-center">
                     <h2 className="delay-10 mx-6 text-xl font-semibold leading-tight text-gray-800 transition ease-in hover:cursor-pointer hover:text-green-300">
-                        Category
+                        Product
                     </h2>
                     <Link href={route('categories.index')}>
                         <button className="rounded-md border bg-green-400 px-4 py-2 text-sm font-semibold text-white shadow-sm transition duration-200 ease-out hover:bg-green-500">
