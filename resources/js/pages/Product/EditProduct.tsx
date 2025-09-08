@@ -7,6 +7,7 @@ type Product = {
     price: string;
     quantity: string;
     created_at: string;
+    category_id: number;
 };
 
 type Category = {
@@ -24,8 +25,11 @@ export default function EditProduct({ product, categories }: EditProductProps) {
         brand_name: product.brand_name,
         price: product.price,
         quantity: product.quantity,
-        category_id: '',
+        category_id: categories.find((category) => category.id === product.category_id)?.id || '',
     });
+
+    console.log(product);
+    console.log(categories);
 
     const { delete: destroy } = useForm();
 

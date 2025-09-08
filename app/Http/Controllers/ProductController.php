@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Repositories\All\Categories\CategoryRepository;
 use App\Repositories\All\Products\ProductInterface;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -62,7 +63,13 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
 
-        $categories = Category::all();
+        $productRepository = app()->make(ProductInterface::class);
+        $categoryRepository = app()->make(CategoryRepository::class);
+
+        $product = $productRepository->findByColumn('id', $product->id, ['category']);
+
+        $categories = $categoryRepository->all();
+
         return Inertia::render('Product/EditProduct', ['product' => $product, 'categories' => $categories]);
     }
 
