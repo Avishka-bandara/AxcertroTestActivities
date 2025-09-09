@@ -17,9 +17,9 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function () {
+Route::get('/product', function () {
     return Inertia::render('Product/Product');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth', 'verified'])->name('product.index');
 
 Route::middleware('auth')->group(function () {
     Route::resource('products', ProductController::class);
