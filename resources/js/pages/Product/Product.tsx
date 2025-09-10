@@ -1,6 +1,7 @@
+import Loading from '@/Components/Loading';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, usePage } from '@inertiajs/react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
 type Product = {
@@ -22,6 +23,14 @@ export default function Product({ products }: ProductProps) {
     // console.log(products);
 
     const { flash } = usePage().props as { flash?: { success?: string; error?: string } };
+    const [loading, setLoading] = useState(false);
+    const { url } = usePage();
+
+    useEffect(() => {
+        setLoading(true);
+        const timeout = setTimeout(() => setLoading(false), 500);
+        return () => clearTimeout(timeout);
+    }, [url]);
 
     useEffect(() => {
         if (flash?.success) toast.success(flash.success);
@@ -68,25 +77,33 @@ export default function Product({ products }: ProductProps) {
                                     </tr>
                                 </thead>
                                 <tbody className="text-center">
-                                    {(products ?? []).map((product) => (
-                                        <tr key={product.id}>
-                                            <td className="border-t border-gray-200 px-4 py-2">{product.id}</td>
-                                            <td className="border-t border-gray-200 px-4 py-2">{product.brand_name}</td>
-                                            <td className="border-t border-gray-200 px-4 py-2">{product.category.name}</td>
-                                            <td className="border-t border-gray-200 px-4 py-2">{product.price}</td>
-                                            <td className="border-t border-gray-200 px-4 py-2">{product.quantity}</td>
-                                            <td className="border-t border-gray-200 px-4 py-2">
-                                                {new Date(product.created_at).toLocaleTimeString()}
-                                            </td>
-                                            <td className="flex border-t border-gray-200 px-4 py-2">
-                                                <Link href={route('products.edit', product.id)}>
-                                                    <button className="rounded bg-green-400 p-2 px-3 text-white hover:bg-green-500 hover:text-white">
-                                                        Edit
-                                                    </button>
-                                                </Link>
+                                    {loading ? (
+                                        <tr>
+                                            <td colSpan={7} className="py-6 text-center">
+                                                <Loading />
                                             </td>
                                         </tr>
-                                    ))}
+                                    ) : (
+                                        (products ?? []).map((product) => (
+                                            <tr key={product.id}>
+                                                <td className="border-t border-gray-200 px-4 py-2">{product.id}</td>
+                                                <td className="border-t border-gray-200 px-4 py-2">{product.brand_name}</td>
+                                                <td className="border-t border-gray-200 px-4 py-2">{product.category.name}</td>
+                                                <td className="border-t border-gray-200 px-4 py-2">{product.price}</td>
+                                                <td className="border-t border-gray-200 px-4 py-2">{product.quantity}</td>
+                                                <td className="border-t border-gray-200 px-4 py-2">
+                                                    {new Date(product.created_at).toLocaleTimeString()}
+                                                </td>
+                                                <td className="flex border-t border-gray-200 px-4 py-2">
+                                                    <Link href={route('products.edit', product.id)}>
+                                                        <button className="rounded bg-green-400 p-2 px-3 text-white hover:bg-green-500 hover:text-white">
+                                                            Edit
+                                                        </button>
+                                                    </Link>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    )}
                                 </tbody>
                             </table>
                         </div>
