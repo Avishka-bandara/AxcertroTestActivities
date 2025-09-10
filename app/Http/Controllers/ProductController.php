@@ -49,7 +49,7 @@ class ProductController extends Controller
 
         $productRepository = app()->make(ProductInterface::class);
         $productRepository->create($validated);
-        return redirect(route('products.index'))->with('message', 'Product created successfully.');
+        return redirect(route('products.index'))->with('success', 'Product created successfully.');
     }
 
     /**
