@@ -1,9 +1,10 @@
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
+import Loading from '@/Components/Loading';
 import TextInput from '@/Components/TextInput';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, useForm } from '@inertiajs/react';
-import React from 'react';
+import { Head, useForm, usePage } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
 
 type Category = {
     id: number;
@@ -18,6 +19,16 @@ export default function AddCategory({ categories }: CategoryProps) {
     const { data, setData, post, errors } = useForm({
         name: '',
     });
+
+    const [loading, setLoading] = useState(false);
+    const { url } = usePage();
+
+    useEffect(() => {
+        setLoading(true);
+        const timeout = setTimeout(() => setLoading(false), 500);
+        return () => clearTimeout(timeout);
+    }, [url]);
+
     function submit(e: React.SyntheticEvent) {
         e.preventDefault();
         post(route('categories.store'));
@@ -86,12 +97,20 @@ export default function AddCategory({ categories }: CategoryProps) {
                             </tr>
                         </thead>
                         <tbody>
-                            {categories.map((category) => (
-                                <tr key={category.id} className="border-t border-gray-200">
-                                    <td className="px-4 py-2">{category.id}</td>
-                                    <td className="px-4 py-2">{category.name}</td>
+                            {loading ? (
+                                <tr>
+                                    <td colSpan={2} className="px-4 py-2">
+                                        <Loading />
+                                    </td>
                                 </tr>
-                            ))}
+                            ) : (
+                                categories.map((category) => (
+                                    <tr key={category.id} className="border-t border-gray-200">
+                                        <td className="px-4 py-2">{category.id}</td>
+                                        <td className="px-4 py-2">{category.name}</td>
+                                    </tr>
+                                ))
+                            )}
                         </tbody>
                     </table>
                 </div>
