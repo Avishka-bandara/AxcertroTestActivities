@@ -1,5 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { useEffect } from 'react';
+import toast from 'react-hot-toast';
 
 type Product = {
     id: number;
@@ -27,8 +29,13 @@ export default function EditProduct({ product, categories }: EditProductProps) {
         quantity: product.quantity,
         category_id: categories.find((category) => category.id === product.category_id)?.id || '',
     });
-
+    const { flash } = usePage().props as { flash?: { success?: string; error?: string } };
     const { delete: destroy } = useForm();
+
+    useEffect(() => {
+        if (flash?.success) toast.success(flash.success);
+        if (flash?.error) toast.error(flash.error);
+    }, [flash]);
 
     function submit(e: React.SyntheticEvent) {
         e.preventDefault();
@@ -36,7 +43,9 @@ export default function EditProduct({ product, categories }: EditProductProps) {
     }
     function deleteProduct(e: React.SyntheticEvent) {
         e.preventDefault();
-        destroy(route('products.destroy', product.id));
+        if (confirm('Are you sure you want to delete this product?')) {
+            destroy(route('products.destroy', product.id));
+        }
     }
 
     return (

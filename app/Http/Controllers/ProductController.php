@@ -87,7 +87,7 @@ class ProductController extends Controller
             'category_id' => 'required|exists:categories,id',
         ]);
         $productRepository->update($product->id, $validated);
-        return redirect(route('products.index'));
+        return redirect(route('products.index'))->with('success', 'Product Updated Successfully!');
     }
 
     /**
@@ -97,6 +97,6 @@ class ProductController extends Controller
     {
         $productRepository = app()->make(ProductInterface::class);
         $productRepository->delete($product->id);
-        return redirect(route('products.index'));
+        return redirect(route('products.index'))->with('success', 'Product Deleted Successfully!');
     }
 }

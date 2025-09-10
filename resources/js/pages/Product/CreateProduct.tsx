@@ -19,7 +19,6 @@ export default function CreateProduct({ categories }: CategoryProps) {
 
     function submit(e: React.SyntheticEvent) {
         e.preventDefault();
-
         post(route('products.store'));
     }
 

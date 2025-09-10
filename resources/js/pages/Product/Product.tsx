@@ -1,5 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
+import { useEffect } from 'react';
+import toast from 'react-hot-toast';
 
 type Product = {
     id: number;
@@ -18,6 +20,14 @@ interface ProductProps {
 
 export default function Product({ products }: ProductProps) {
     // console.log(products);
+
+    const { flash } = usePage().props as { flash?: { success?: string; error?: string } };
+
+    useEffect(() => {
+        if (flash?.success) toast.success(flash.success);
+        if (flash?.error) toast.error(flash.error);
+    }, [flash]);
+
     return (
         <AuthenticatedLayout
             header={
